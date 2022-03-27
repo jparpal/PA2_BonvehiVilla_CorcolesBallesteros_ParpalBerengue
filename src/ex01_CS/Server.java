@@ -13,9 +13,13 @@ public class Server extends Thread {
 
 	/* MAIN IS THE LAUNCHER */
 	public static void main(String[] args) throws IOException {
-
+		
+		Server server = new Server();
+		server.run();
 	}
-
+	
+	/** INICI CODI NOU **/
+	
 	private void acceptConnection() throws IOException {
 		this.connection = this.serverSocket.accept();
 		this.inputChannel = new BufferedReader(new InputStreamReader(this.connection.getInputStream()));
@@ -43,8 +47,8 @@ public class Server extends Thread {
 	public void innerRun() throws IOException {
 		Request request;
 		String answer = "";
-		serverSocket = new ServerSocket(5555);
-		System.out.println("Server running and listening to port 5555");
+		serverSocket = new ServerSocket(6666);
+		System.out.println("Server running and listening to port 6666");
 		while(true) {
 			acceptConnection();
 			String message = this.inputChannel.readLine();
@@ -54,6 +58,8 @@ public class Server extends Thread {
 			}
 		}
 	}
+	
+	/** FI CODI NOU **/
 }
 
 // utility class. Makes requests out of strings
