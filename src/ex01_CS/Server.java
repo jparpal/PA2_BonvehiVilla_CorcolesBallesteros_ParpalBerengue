@@ -50,7 +50,7 @@ public class Server extends Thread {
 			String message = this.inputChannel.readLine();
 			request = new Request(message);
 			switch (request.type) {
-			case 
+			
 			}
 		}
 	}
