@@ -57,9 +57,13 @@ public class Server extends Thread {
 			//Request request = new Request(message);
 			switch (new Request(recive()).type) {
 				case CHECK: reply("");
+				break;
 				case RESET: reply("");
+				break;
 				case TERMINATE: reply(""); terminate=true;
+				break;
 				case UNKNOWN: reply("");
+				break;
 			}
 		}
 		disconnect();
