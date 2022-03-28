@@ -48,7 +48,8 @@ public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGam
 	}
 
 	public String terminate(int id) throws RemoteException {
-		return "Number of attempts: " + attempts + "Number of guessed numbers: " + guessed;	
+		//return "Number of attempts: " + attempts + "Number of guessed numbers: " + guessed;	
+		return null;
 	}
 	
 }
