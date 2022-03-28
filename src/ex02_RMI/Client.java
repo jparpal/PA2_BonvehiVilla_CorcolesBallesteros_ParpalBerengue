@@ -133,11 +133,17 @@ public class Client implements ActionListener {
 	
 	protected void do_btnConnect_actionPerformed(ActionEvent e) {
 		/* COMPLETE */
+		try {
+			Registry registry = LocateRegistry.getRegistry("localhost", 1999);
+		    GuessGameObject id = (GuessGameObject) registry.lookup("ComputeService"); /*	Gets a remote reference	*/
+		}catch(RemoteException re) {} catch (NotBoundException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	protected  void do_btnReset_actionPerformed(ActionEvent e) {
-		
 		/* COMPLETE */
+		
 	}
 	
 	protected  void do_btnSend_actionPerformed(ActionEvent e) {
