@@ -4,9 +4,10 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
+import ex01_CS.Request.Type;
+
 public class Server extends Thread {
 
-	private ServerSocket serverSocket;
 	private Socket connection;
 	private BufferedReader inputChannel;
 	private PrintWriter outputChannel;
@@ -14,27 +15,31 @@ public class Server extends Thread {
 	/* MAIN IS THE LAUNCHER */
 	public static void main(String[] args) throws IOException {
 		
-		Server server = new Server();
-		server.run();
+		Socket connection;
+		ServerSocket serverSocket = new ServerSocket(6666);
+		System.out.println("Server running and listening to port 6666");
+		
+		while(true) {
+			connection = serverSocket.accept();
+			new Server(connection).start();
+		}
 	}
-	
-	/** INICI CODI NOU **/
-	
-	private void acceptConnection() throws IOException {
-		this.connection = this.serverSocket.accept();
-		this.inputChannel = new BufferedReader(new InputStreamReader(this.connection.getInputStream()));
-		this.outputChannel = new PrintWriter(this.connection.getOutputStream(), true);
-	}
+	/** CODI NOU **/
+	public Server(Socket connection) { this.connection = connection; }
 	
 	private void disconnect() throws IOException {
 		this.connection.close();
 		this.inputChannel.close();
 		this.outputChannel.close();
 	}
-	
-	private void sendReply(String message) {
-		this.outputChannel.println(message);
+	private void createChannels() throws IOException{
+		this.inputChannel = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		this.outputChannel = new PrintWriter(connection.getOutputStream(), true);
 	}
+	
+	private void reply(String message) { this.outputChannel.println(message);this.outputChannel.flush(); }
+	
+	private String recive() throws IOException { return this.inputChannel.readLine(); }
 	
 	public void run() {
 		try {
@@ -45,20 +50,20 @@ public class Server extends Thread {
 	}
 	
 	public void innerRun() throws IOException {
-		Request request;
-		String answer = "";
-		serverSocket = new ServerSocket(6666);
-		System.out.println("Server running and listening to port 6666");
-		while(true) {
-			acceptConnection();
-			String message = this.inputChannel.readLine();
-			request = new Request(message);
-			switch (request.type) {
-			
+		createChannels();
+		Boolean terminate = false;
+		while(!terminate) {
+			//String message = recive();
+			//Request request = new Request(message);
+			switch (new Request(recive()).type) {
+				case CHECK: reply("");
+				case RESET: reply("");
+				case TERMINATE: reply(""); terminate=true;
+				case UNKNOWN: reply("");
 			}
 		}
+		disconnect();
 	}
-	
 	/** FI CODI NOU **/
 }
 
