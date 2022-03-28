@@ -2,15 +2,14 @@ package ex01_CS;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-
-import ex01_CS.Request.Type;
+import java.util.Random;
 
 public class Server extends Thread {
 
 	private Socket connection;
 	private BufferedReader inputChannel;
 	private PrintWriter outputChannel;
+	private int value, guesses=0, gessed=0;
 
 	/* MAIN IS THE LAUNCHER */
 	public static void main(String[] args) throws IOException {
@@ -24,7 +23,6 @@ public class Server extends Thread {
 			new Server(connection).start();
 		}
 	}
-	/** CODI NOU **/
 	public Server(Socket connection) { this.connection = connection; }
 	
 	private void disconnect() throws IOException {
@@ -42,33 +40,48 @@ public class Server extends Thread {
 	private String recive() throws IOException { return this.inputChannel.readLine(); }
 	
 	public void run() {
-		try {
-			innerRun();
-		} catch (IOException ioex) {
-			ioex.printStackTrace(System.err);
-		}
+		try { innerRun(); } catch (IOException ioex) { ioex.printStackTrace(System.err); }
 	}
 	
 	public void innerRun() throws IOException {
 		createChannels();
 		Boolean terminate = false;
 		while(!terminate) {
-			//String message = recive();
-			//Request request = new Request(message);
-			switch (new Request(recive()).type) {
-				case CHECK: reply("");
+			Request request = new Request(recive());
+			switch (request.type) {
+				case CHECK: reply(check(request.value));
 				break;
-				case RESET: reply("");
+				case RESET: reply(reset());
 				break;
-				case TERMINATE: reply(""); terminate=true;
+				case TERMINATE: reply(terminate()); terminate=true;
 				break;
-				case UNKNOWN: reply("");
+				case UNKNOWN: reply("Unknown message");
 				break;
 			}
 		}
 		disconnect();
 	}
-	/** FI CODI NOU **/
+	
+	private String terminate() {
+		return ("GOODBYE. "+"You made "+guesses +" guesses and got "+gessed +" numbers right");
+	}
+	
+	private String reset() {
+		this.value=new Random().nextInt(999)+1; //Comprobar el rang de valors 1 a 999
+		return "RESET_OK";
+	}
+	
+	private String check(int value) {
+		guesses++;
+		if (this.value == value) {
+			gessed++;
+			return "EQUAL";
+		} else if (this.value < value) {
+			return "LOWER";
+		} else {
+			return "HIGHER";
+		}
+	}
 }
 
 // utility class. Makes requests out of strings
