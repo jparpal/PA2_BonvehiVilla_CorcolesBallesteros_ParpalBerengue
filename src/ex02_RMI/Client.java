@@ -144,11 +144,18 @@ public class Client implements ActionListener {
 
 		this.btnReset.setEnabled(true);
 		this.btnTerminate.setEnabled(true);
+		this.btnConnect.setEnabled(false);
 	}
 	
 	protected  void do_btnReset_actionPerformed(ActionEvent e) {
 		
 		/* COMPLETE */
+		try {
+			System.out.println(this.guessObject.reset(myId));
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		this.btnSend.setEnabled(true);
 		this.textField.setEnabled(true);
 	}
