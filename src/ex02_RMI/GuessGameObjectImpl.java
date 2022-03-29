@@ -7,11 +7,11 @@ import java.rmi.server.*;
 import java.util.*;
 
 public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGameObject{
-	private int ranNum;
-	private Random ran = new Random();
-	protected GuessGameObjectImpl() throws RemoteException {
-			
-	}
+	
+	private int countId;
+	HashMap<Integer, ClientRep> ClientMap = new HashMap<Integer, ClientRep>();
+	
+	protected GuessGameObjectImpl() throws RemoteException {}
 
 	// launcher
 	public static void main (String [] args)  {
@@ -26,15 +26,18 @@ public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGam
 	}
 	
 	public int startGame () throws RemoteException{
-		ranNum = ran.nextInt();
-		return ranNum;
+		countId++;
+		ClientRep clientRep = new ClientRep();
+		clientRep.theNumber = new Random().nextInt(999)+1;
+		ClientMap.put(countId, clientRep);
+		return countId;
 	}
 
 	public String check(int id, int number) throws RemoteException {
 		/*	FALTA: Throws an exception if the id is unknown		*/
-		if(number == ranNum) {
+		if(number == 0) {
 			return "EQUAL";
-		}else if(number < ranNum) {
+		}else if(number < 0) {
 			return "LOWER";
 		}else {
 			return "HIGHER";
@@ -43,8 +46,8 @@ public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGam
 
 	public String reset(int id) throws RemoteException {
 		/*	FALTA: Throws an exception if the id is unknown		*/
-		ranNum = ran.nextInt();
-		return Integer.toString(ranNum);
+		//ranNum = ran.nextInt();
+		return Integer.toString(0);
 	}
 
 	public String terminate(int id) throws RemoteException {
