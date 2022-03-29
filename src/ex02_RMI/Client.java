@@ -136,18 +136,21 @@ public class Client implements ActionListener {
 		try {
 			Registry registry = LocateRegistry.getRegistry("localhost", 1999);
 			this.guessObject = (GuessGameObject) registry.lookup("GUESS");
+			this.myId = guessObject.startGame();
 		} catch (RemoteException | NotBoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+
 		this.btnReset.setEnabled(true);
-		this.btnSend.setEnabled(true);
-		this.textField.setEnabled(true);
+		this.btnTerminate.setEnabled(true);
 	}
 	
 	protected  void do_btnReset_actionPerformed(ActionEvent e) {
 		
 		/* COMPLETE */
+		this.btnSend.setEnabled(true);
+		this.textField.setEnabled(true);
 	}
 	
 	protected  void do_btnSend_actionPerformed(ActionEvent e) {
