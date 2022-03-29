@@ -36,25 +36,32 @@ public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGam
 	public String check(int id, int number) throws RemoteException {
 		if(!clientMap.containsKey(id)) throw new RemoteException("Id is unknown");	/*Throws an exception if the id is unknown */
 		ClientRep clientRep = clientMap.get(id);
+		clientRep.attempts++;
 		if(number == clientRep.theNumber) {
+			if(clientRep.justGuessed) throw new RemoteException("The number has been guessed in the last attempt but reset has not been invoked");	/* if invoked when the number has been guessed in the last attempt but reset has not been invoked, throws an exception. */
+			clientRep.justGuessed=true;
+			clientRep.guessed++;
 			return "EQUAL";
 		}else if(number < clientRep.theNumber) {
 			return "LOWER";
 		}else {
 			return "HIGHER";
-		} /*	FALTA: if invoked when the number has been guessed in the last attempt but reset has not been invoked, throws an exception.		*/
+		}
 	}
 
 	public String reset(int id) throws RemoteException {
         if (!clientMap.containsKey(id))throw new RemoteException("Id is unknown");	/*Throws an exception if the id is unknown */
         int newRand = new Random().nextInt(999)+1;
-        clientMap.get(id).theNumber = newRand;
+        ClientRep clientRep = clientMap.get(id);
+        clientRep.theNumber = newRand;
+        clientRep.justGuessed=false;
         return "RESET_OK";
     }
 
 	public String terminate(int id) throws RemoteException {
 		//return "Number of attempts: " + attempts + "Number of guessed numbers: " + guessed;	
-		return null;
+		ClientRep cr = clientMap.get(id);
+        return ("GOODBYE. "+"You made "+cr.attempts +" guesses and got "+cr.guessed +" numbers right");
 	}
 	
 }
