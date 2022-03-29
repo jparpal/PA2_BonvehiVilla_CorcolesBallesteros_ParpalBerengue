@@ -35,15 +35,12 @@ public class Client implements ActionListener {
 	private JButton btnTerminate;
 	private JScrollPane scrollPane;
 	private JTextArea messages;
-	
+
 	// you'll need this two attributes...
 	private GuessGameObject guessObject;
 	int myId;
-	
 
-	/**
-	 * Launch the application.
-	 */
+	/** Launch the application. */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -57,66 +54,63 @@ public class Client implements ActionListener {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
+	/** Create the application. */
 	public Client() {
 		initialize();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
+	/** Initialize the contents of the frame. */
 	private void initialize() {
 		this.frmGuessTheNumber = new JFrame();
 		this.frmGuessTheNumber.setTitle("GUESS THE NUMBER RMI-version");
 		this.frmGuessTheNumber.setBounds(100, 100, 637, 417);
 		this.frmGuessTheNumber.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.frmGuessTheNumber.getContentPane().setLayout(null);
-		
+
 		this.btnConnect = new JButton("Connect");
 		this.btnConnect.addActionListener(this);
 		this.btnConnect.setBounds(10, 11, 89, 23);
 		this.frmGuessTheNumber.getContentPane().add(this.btnConnect);
-		
+
 		this.textField = new JTextField();
 		this.textField.addActionListener(this);
 		this.textField.setEnabled(false);
 		this.textField.setBounds(65, 45, 86, 20);
 		this.frmGuessTheNumber.getContentPane().add(this.textField);
 		this.textField.setColumns(10);
-		
+
 		this.lblGuess = new JLabel("Guess:");
 		this.lblGuess.setBounds(20, 48, 46, 14);
 		this.frmGuessTheNumber.getContentPane().add(this.lblGuess);
-		
+
 		this.btnSend = new JButton("Send");
 		this.btnSend.setEnabled(false);
 		this.btnSend.addActionListener(this);
 		this.btnSend.setBounds(161, 44, 89, 23);
 		this.frmGuessTheNumber.getContentPane().add(this.btnSend);
-		
+
 		this.btnReset = new JButton("Reset");
 		this.btnReset.addActionListener(this);
 		this.btnReset.setEnabled(false);
 		this.btnReset.setBounds(10, 87, 105, 23);
 		this.frmGuessTheNumber.getContentPane().add(this.btnReset);
-		
+
 		this.btnTerminate = new JButton("Terminate");
 		this.btnTerminate.addActionListener(this);
 		this.btnTerminate.setEnabled(false);
 		this.btnTerminate.setBounds(10, 121, 105, 23);
 		this.frmGuessTheNumber.getContentPane().add(this.btnTerminate);
-		
+
 		this.scrollPane = new JScrollPane();
-		this.scrollPane.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "INFO", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 0, 0)));
+		this.scrollPane.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "INFO",
+				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 0, 0)));
 		this.scrollPane.setBounds(324, 45, 266, 304);
 		this.frmGuessTheNumber.getContentPane().add(this.scrollPane);
-		
+
 		this.messages = new JTextArea();
 		this.scrollPane.setViewportView(this.messages);
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == this.textField) {
 			do_textField_actionPerformed(e);
@@ -134,70 +128,55 @@ public class Client implements ActionListener {
 			do_btnSend_actionPerformed(e);
 		}
 	}
-	
+
 	protected void do_btnConnect_actionPerformed(ActionEvent e) {
-		/* COMPLETE */		
-		
-		try  {
+		/* COMPLETE */
+		try {
 			Registry registry = LocateRegistry.getRegistry("localhost", 1999);
 			this.guessObject = (GuessGameObject) registry.lookup("GUESS");
 			this.myId = guessObject.startGame();
 			messages.append("Connection established\n");
-		}
-		catch (Exception ex) {
-			JOptionPane.showMessageDialog(this.frmGuessTheNumber,
-				    "Failed to establish a connection.", 
-				    "Connection Failure",
-				    JOptionPane.ERROR_MESSAGE);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this.frmGuessTheNumber, "Failed to establish a connection.",
+					"Connection Failure", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
-			//this.messages.append("Server unreacheable or not running...\n");
-			
 		}
 		this.btnConnect.setEnabled(false);
 		this.btnReset.setEnabled(true);
 		this.btnTerminate.setEnabled(true);
 	}
-	
-	protected  void do_btnReset_actionPerformed(ActionEvent e) {
-		
+
+	protected void do_btnReset_actionPerformed(ActionEvent e) {
 		/* COMPLETE */
-		
 		try {
 			String answer = this.guessObject.reset(myId);
-		    this.messages.append("Server says: "+answer+" \n");
-		    this.btnSend.setEnabled(true);
-		    this.textField.setEnabled(true);
-		}
-		catch(Exception ioex) {
-			JOptionPane.showMessageDialog(this.frmGuessTheNumber,
-				    "IO error when getting response from server", 
-				    "Connection Failure",
-				    JOptionPane.ERROR_MESSAGE);
+			this.messages.append("Server says: " + answer + " \n");
+			this.btnSend.setEnabled(true);
+			this.textField.setEnabled(true);
+		} catch (Exception ioex) {
+			JOptionPane.showMessageDialog(this.frmGuessTheNumber, "IO error when getting response from server",
+					"Connection Failure", JOptionPane.ERROR_MESSAGE);
 			this.messages.append("\"IO error when getting response from server\n");
 			this.messages.append("Connection Failure\n");
 		}
-
 	}
-	
-	protected  void do_btnSend_actionPerformed(ActionEvent e) {
+
+	protected void do_btnSend_actionPerformed(ActionEvent e) {
 		int number = 0;
 		try {
 			number = Integer.parseInt(this.textField.getText());
-			if (number<0) throw new NumberFormatException();
-		}
-		catch (NumberFormatException ex) {
-			JOptionPane.showMessageDialog(this.frmGuessTheNumber,
-				    "Only positive integers allowed", 
-				    "Bad Number",
-				    JOptionPane.WARNING_MESSAGE);
+			if (number < 0)
+				throw new NumberFormatException();
+		} catch (NumberFormatException ex) {
+			JOptionPane.showMessageDialog(this.frmGuessTheNumber, "Only positive integers allowed", "Bad Number",
+					JOptionPane.WARNING_MESSAGE);
 			this.textField.setText("");
 			messages.append("Bad number: Only positive integers allowed\n");
 			return;
 		}
 		// send number to server
-		
-		/* COMLETE */
 
+		/* COMLETE */
 		String response = null;
 		try {
 			response = this.guessObject.check(myId, number);
@@ -209,41 +188,33 @@ public class Client implements ActionListener {
 			// System.exit(1);
 		}
 		if (!response.equalsIgnoreCase("EQUAL")) {
-			messages.append("Server says (my number is): "+response+"\n");
-		}
-		else {
+			messages.append("Server says (my number is): " + response + "\n");
+		} else {
 			// equal-> number correctly guessed.
 			JOptionPane.showMessageDialog(this.frmGuessTheNumber,
-				    "You got it! Number was: "+number+"\nPress Reset to play again\npress Terminate to quit", 
-				    "NUMBER GUESSED!!!",
-				    JOptionPane.INFORMATION_MESSAGE);
+					"You got it! Number was: " + number + "\nPress Reset to play again\npress Terminate to quit",
+					"NUMBER GUESSED!!!", JOptionPane.INFORMATION_MESSAGE);
 			messages.append("Server says (my number is): EQUAL\n");
-			messages.append("NUMBER GUESSED!!! "+number+" \n");
+			messages.append("NUMBER GUESSED!!! " + number + " \n");
 			this.btnSend.setEnabled(false);
 		}
-		
+
 		this.textField.setText("");
 	}
-	
+
 	protected void do_btnTerminate_actionPerformed(ActionEvent e) {
 		try {
 			String response = guessObject.terminate(myId);
-			JOptionPane.showMessageDialog(this.frmGuessTheNumber,
-				    "Remote response: "+response, 
-				    "TERMINATING...!!!",
-				    JOptionPane.INFORMATION_MESSAGE);
-		}
-		catch (RemoteException ex) {
-			JOptionPane.showMessageDialog(this.frmGuessTheNumber,
-				    "?!?!?!?!?!?!\n"+ex, 
-				    "Abnormal Termination",
-				    JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this.frmGuessTheNumber, "Remote response: " + response, "TERMINATING...!!!",
+					JOptionPane.INFORMATION_MESSAGE);
+		} catch (RemoteException ex) {
+			JOptionPane.showMessageDialog(this.frmGuessTheNumber, "?!?!?!?!?!?!\n" + ex, "Abnormal Termination",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		System.exit(0);
-		
-		
 	}
-	protected  void do_textField_actionPerformed(ActionEvent e) {
+
+	protected void do_textField_actionPerformed(ActionEvent e) {
 		do_btnSend_actionPerformed(e);
 	}
 }
