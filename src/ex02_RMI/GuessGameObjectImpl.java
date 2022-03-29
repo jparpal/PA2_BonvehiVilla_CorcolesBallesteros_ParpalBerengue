@@ -9,11 +9,11 @@ import java.util.*;
 public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGameObject{
 	
 	private int countId=0;
-	HashMap<Integer, ClientRep> ClientMap = new HashMap<Integer, ClientRep>();
+	HashMap<Integer, ClientRep> clientMap = new HashMap<Integer, ClientRep>();
 	
 	protected GuessGameObjectImpl() throws RemoteException {}
 
-	// launcher
+	// launcher 
 	public static void main (String [] args)  {
 		try {
 			Registry registry = LocateRegistry.createRegistry(1999);
@@ -29,15 +29,16 @@ public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGam
 		countId++;
 		ClientRep clientRep = new ClientRep();
 		clientRep.theNumber = new Random().nextInt(999)+1;
-		ClientMap.put(countId, clientRep);
+		clientMap.put(countId, clientRep);
 		return countId;
 	}
 
 	public String check(int id, int number) throws RemoteException {
-		/*	FALTA: Throws an exception if the id is unknown		*/
-		if(number == 0) {
+		if(!clientMap.containsKey(id)) throw new RemoteException("Id is unknown");	/*Throws an exception if the id is unknown */
+		ClientRep clientRep = clientMap.get(id);
+		if(number == clientRep.theNumber) {
 			return "EQUAL";
-		}else if(number < 0) {
+		}else if(number < clientRep.theNumber) {
 			return "LOWER";
 		}else {
 			return "HIGHER";
@@ -45,10 +46,11 @@ public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGam
 	}
 
 	public String reset(int id) throws RemoteException {
-		/*	FALTA: Throws an exception if the id is unknown		*/
-		//ranNum = ran.nextInt();
-		return Integer.toString(0);
-	}
+        if (!clientMap.containsKey(id))throw new RemoteException("Id is unknown");	/*Throws an exception if the id is unknown */
+        int newRand = new Random().nextInt(999)+1;
+        clientMap.get(id).theNumber = newRand;
+        return "RESET_OK";
+    }
 
 	public String terminate(int id) throws RemoteException {
 		//return "Number of attempts: " + attempts + "Number of guessed numbers: " + guessed;	
