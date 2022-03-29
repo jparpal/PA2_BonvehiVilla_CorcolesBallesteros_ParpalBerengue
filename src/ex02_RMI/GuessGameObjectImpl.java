@@ -5,11 +5,12 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGameObject{
 	
 	private int countId=0;
-	HashMap<Integer, ClientRep> clientMap = new HashMap<Integer, ClientRep>();
+	private ConcurrentHashMap<Integer, ClientRep> clientMap = new ConcurrentHashMap<Integer, ClientRep>();
 	
 	protected GuessGameObjectImpl() throws RemoteException {}
 
@@ -62,7 +63,6 @@ public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGam
 		ClientRep cr = clientMap.get(id);
         return ("GOODBYE. "+"You made "+cr.attempts +" guesses and got "+cr.guessed +" numbers right");
 	}
-	
 }
 
 // utility class to represent clients (stores all relevant info regarding a client)
