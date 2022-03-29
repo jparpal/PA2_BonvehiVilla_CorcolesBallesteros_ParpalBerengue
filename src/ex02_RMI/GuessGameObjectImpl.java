@@ -8,7 +8,7 @@ import java.util.*;
 
 public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGameObject{
 	
-	private int countId;
+	private int countId=0;
 	HashMap<Integer, ClientRep> ClientMap = new HashMap<Integer, ClientRep>();
 	
 	protected GuessGameObjectImpl() throws RemoteException {}
