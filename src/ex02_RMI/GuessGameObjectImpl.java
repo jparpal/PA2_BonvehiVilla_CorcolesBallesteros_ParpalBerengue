@@ -26,7 +26,7 @@ public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGam
 		System.out.println("Guess service bound and running");
 	}
 	
-	public int startGame () throws RemoteException{
+	public synchronized int startGame () throws RemoteException{
 		countId++;
 		ClientRep clientRep = new ClientRep();
 		clientRep.theNumber = new Random().nextInt(999)+1;
