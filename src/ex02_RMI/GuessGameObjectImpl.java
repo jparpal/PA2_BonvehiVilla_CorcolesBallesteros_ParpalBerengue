@@ -42,7 +42,7 @@ public class GuessGameObjectImpl extends UnicastRemoteObject implements GuessGam
 			clientRep.justGuessed=true;
 			clientRep.guessed++;
 			return "EQUAL";
-		}else if(number < clientRep.theNumber) {
+		}else if(number > clientRep.theNumber) {
 			return "LOWER";
 		}else {
 			return "HIGHER";
