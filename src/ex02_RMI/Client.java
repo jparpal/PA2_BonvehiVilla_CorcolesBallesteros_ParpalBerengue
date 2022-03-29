@@ -197,9 +197,34 @@ public class Client implements ActionListener {
 		// send number to server
 		
 		/* COMLETE */
-	
+
+		String response = null;
+		try {
+			response = this.guessObject.check(myId, number);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this.frmGuessTheNumber, "IO error when getting response from server",
+					"Connection Failure", JOptionPane.ERROR_MESSAGE);
+			messages.append("\"IO error when getting response from server\n");
+			messages.append("consider terminating...\n");
+			// System.exit(1);
+		}
+		if (!response.equalsIgnoreCase("EQUAL")) {
+			messages.append("Server says (my number is): "+response+"\n");
+		}
+		else {
+			// equal-> number correctly guessed.
+			JOptionPane.showMessageDialog(this.frmGuessTheNumber,
+				    "You got it! Number was: "+number+"\nPress Reset to play again\npress Terminate to quit", 
+				    "NUMBER GUESSED!!!",
+				    JOptionPane.INFORMATION_MESSAGE);
+			messages.append("Server says (my number is): EQUAL\n");
+			messages.append("NUMBER GUESSED!!! "+number+" \n");
+			this.btnSend.setEnabled(false);
+		}
+		
 		this.textField.setText("");
 	}
+	
 	protected void do_btnTerminate_actionPerformed(ActionEvent e) {
 		try {
 			String response = guessObject.terminate(myId);
