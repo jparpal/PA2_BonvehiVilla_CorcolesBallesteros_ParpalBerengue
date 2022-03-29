@@ -17,6 +17,10 @@ import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.awt.event.ActionEvent;
 import javax.swing.UIManager;
 
@@ -132,32 +136,47 @@ public class Client implements ActionListener {
 	}
 	
 	protected void do_btnConnect_actionPerformed(ActionEvent e) {
-		/* COMPLETE */
-		try {
+		/* COMPLETE */		
+		
+		try  {
 			Registry registry = LocateRegistry.getRegistry("localhost", 1999);
 			this.guessObject = (GuessGameObject) registry.lookup("GUESS");
 			this.myId = guessObject.startGame();
-		} catch (RemoteException | NotBoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			messages.append("Connection established\n");
 		}
-
+		catch (Exception ex) {
+			JOptionPane.showMessageDialog(this.frmGuessTheNumber,
+				    "Failed to establish a connection.", 
+				    "Connection Failure",
+				    JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+			//this.messages.append("Server unreacheable or not running...\n");
+			
+		}
+		this.btnConnect.setEnabled(false);
 		this.btnReset.setEnabled(true);
 		this.btnTerminate.setEnabled(true);
-		this.btnConnect.setEnabled(false);
 	}
 	
 	protected  void do_btnReset_actionPerformed(ActionEvent e) {
 		
 		/* COMPLETE */
+		
 		try {
-			System.out.println(this.guessObject.reset(myId));
-		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			String answer = this.guessObject.reset(myId);
+		    this.messages.append("Server says: "+answer+" \n");
+		    this.btnSend.setEnabled(true);
+		    this.textField.setEnabled(true);
 		}
-		this.btnSend.setEnabled(true);
-		this.textField.setEnabled(true);
+		catch(Exception ioex) {
+			JOptionPane.showMessageDialog(this.frmGuessTheNumber,
+				    "IO error when getting response from server", 
+				    "Connection Failure",
+				    JOptionPane.ERROR_MESSAGE);
+			this.messages.append("\"IO error when getting response from server\n");
+			this.messages.append("Connection Failure\n");
+		}
+
 	}
 	
 	protected  void do_btnSend_actionPerformed(ActionEvent e) {
@@ -178,7 +197,7 @@ public class Client implements ActionListener {
 		// send number to server
 		
 		/* COMLETE */
-		
+	
 		this.textField.setText("");
 	}
 	protected void do_btnTerminate_actionPerformed(ActionEvent e) {
